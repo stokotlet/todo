@@ -139,9 +139,9 @@ class App extends React.Component {
   };
 
   render() {
-    var a=0
     return (
-      <section className="todoapp">;;
+      <section className="todoapp">
+        ;;
         <header className="header">
           <h1>todo</h1>
           <NewTaskForm addNewTask={this.addNewTask} />
