@@ -31,6 +31,8 @@ class App extends React.Component {
         taskData: []
     }
 
+
+
     counter = () => {
         let countList = this.state.taskData.filter( task => !task.done)
         return countList.length
@@ -130,6 +132,22 @@ class App extends React.Component {
         })
     }
 
+    onEditTask = (id, label) => {
+        this.setState(({taskData})=> {
+            const idx = taskData.findIndex(task => task.id === id)
+            const task = taskData[idx]
+            const currentTask = {...task}
+            currentTask.label = label
+            const newTaskData = [
+                ...taskData.slice(0, idx), currentTask, ...taskData.slice(idx + 1)
+            ]
+            return {
+                taskData: newTaskData
+            }
+
+        })
+    }
+
     render(){
         return (
             <section className="todoapp">
@@ -140,7 +158,9 @@ class App extends React.Component {
                 <section className="main">
                     <TaskList taskData = {this.state.taskData}
                               onDeleted={this.deleteTask}
-                              onTaskDone={this.onTaskDone}/>
+                              onTaskDone={this.onTaskDone}
+                              onEditTask={this.onEditTask}
+                    />
                 </section>
                     <Footer onFilterCompleted={this.onFilterCompleted}
                             onFilterActive = {this.onFilterActive}

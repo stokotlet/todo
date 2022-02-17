@@ -4,10 +4,10 @@ import formatDistanceToNow from 'date-fns/formatDistanceToNow'
 
 export default class Task extends React.Component {
     state = {
+        date: new Date(),
+        tick: true,
         editing: false,
-        createNewTask: false,
     }
-
 
     taskEditing = () => {
         this.setState(state => {
@@ -15,15 +15,51 @@ export default class Task extends React.Component {
         })
     }
 
-    render() {
-        const created = formatDistanceToNow(new Date())
-        const editField = <input type="text" className="edit" defaultValue="Editing task"/>
+    onchangeHandler = (e) => {
+        this.setState({
+            label: e.target.value
+        })
+    }
 
-        const { viewClass, checkboxClass, checkBoxType, descClass,
+    onSubmitHandler = (e) => {
+        e.preventDefault()
+        this.props.onEditTask(this.state.label)
+        this.setState({
+            editing: false,
+        })
+    }
+
+    componentDidMount() {
+        this.timerID = setInterval(
+            () => this.tick(),
+            1000
+        );
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.timerID);
+    }
+
+    tick() {
+        this.setState({
+            tick: new Date()
+        });
+    }
+
+    render() {
+        let { viewClass, checkboxClass, checkBoxType, descClass,
             createdClass, iconEditClass, iconDestroyClass, onDeleted, onTaskDone, done, label, hidden} = this.props
+        const created = formatDistanceToNow(this.state.date, {includeSeconds: true})
+        const editField = <form onSubmit={this.onSubmitHandler}>
+            <input onChange={this.onchangeHandler} type="text" className="edit" defaultValue={label}/>
+        </form>
+
         let mainClass = 'active'
-        if (done) {mainClass = 'completed'}
+        if (done) {
+            mainClass = 'completed'
+        }
         if (this.state.editing) {mainClass = 'editing'}
+
         if (hidden) {mainClass = 'hidden'}
 
         return (
@@ -34,7 +70,7 @@ export default class Task extends React.Component {
                         <span className={descClass}>{label}</span>
                         <span className={createdClass}>{created}</span>
                     </label>
-                    <button onClick={this.taskEditing.bind(this)} className={iconEditClass}></button>
+                    <button onClick={this.taskEditing} className={iconEditClass}></button>
                     <button onClick={onDeleted} className={iconDestroyClass}></button>
                 </div>
                 {editField}

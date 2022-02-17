@@ -1,13 +1,14 @@
 import React from "react";
 import Task from "../task/Task";
 
-const TaskList = ( {taskData, onDeleted, onTaskDone} ) => {
+const TaskList = ( {taskData, onDeleted, onTaskDone, onEditTask} ) => {
     let taskList = taskData.map(task => {
         return (
             <div key={task.id}>
                 <Task {...task}
                       onDeleted = { () => onDeleted(task.id) }
                       onTaskDone = { () => onTaskDone(task.id) }
+                      onEditTask = { (label) => onEditTask(task.id, label) }
                 />
             </div>
         )
