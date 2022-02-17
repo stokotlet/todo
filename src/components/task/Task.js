@@ -16,17 +16,25 @@ export default class Task extends React.Component {
   };
 
   onchangeHandler = (e) => {
-    this.setState({
-      label: e.target.value,
-    });
+    if (e.target.value) {
+      this.setState({
+        label: e.target.value,
+      });
+    }
   };
 
   onSubmitHandler = (e) => {
     e.preventDefault();
-    this.props.onEditTask(this.state.label);
-    this.setState({
-      editing: false,
-    });
+    if (this.state.label) {
+      this.props.onEditTask(this.state.label);
+      this.setState({
+        editing: false,
+      });
+    } else {
+      this.setState({
+        editing: false,
+      });
+    }
   };
 
   componentDidMount() {
