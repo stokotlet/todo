@@ -139,6 +139,7 @@ class App extends React.Component {
   };
 
   render() {
+    var a=0
     return (
       <section className="todoapp">;;
         <header className="header">
