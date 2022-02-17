@@ -140,7 +140,7 @@ class App extends React.Component {
 
   render() {
     return (
-      <section className="todoapp">
+      <section className="todoapp">;;
         <header className="header">
           <h1>todo</h1>
           <NewTaskForm addNewTask={this.addNewTask} />
