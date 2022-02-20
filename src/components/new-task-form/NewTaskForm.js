@@ -8,15 +8,19 @@ export default class NewTaskForm extends React.Component {
 
   handleChange = (e) => {
     e.preventDefault();
-    this.setState({
-      newTask: e.target.value,
-    });
+    if (e.target.value) {
+      this.setState({
+        newTask: e.target.value,
+      });
+    }
   };
 
   onSubmit = (e) => {
     e.preventDefault();
-    this.props.addNewTask(this.state.newTask);
-    this.setState({ newTask: '' });
+    if (this.state.newTask) {
+      this.props.addNewTask(this.state.newTask);
+      this.setState({ newTask: '' });
+    }
   };
 
   render() {

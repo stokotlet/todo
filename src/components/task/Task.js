@@ -6,7 +6,6 @@ export default class Task extends React.Component {
     date: new Date(),
     tick: true,
     editing: false,
-    label: '',
   };
 
   taskEditing = () => {
