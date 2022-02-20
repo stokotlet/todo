@@ -52,20 +52,7 @@ export default class Task extends React.Component {
   }
 
   render() {
-    let {
-      viewClass,
-      checkboxClass,
-      checkBoxType,
-      descClass,
-      createdClass,
-      iconEditClass,
-      iconDestroyClass,
-      onDeleted,
-      onTaskDone,
-      done,
-      label,
-      hidden,
-    } = this.props;
+    let { onDeleted, onTaskDone, done, label, hidden } = this.props;
     const created = formatDistanceToNow(this.state.date, { includeSeconds: true });
     const editField = (
       <form onSubmit={this.onSubmitHandler}>
@@ -86,14 +73,14 @@ export default class Task extends React.Component {
 
     return (
       <li className={mainClass}>
-        <div className={viewClass}>
-          <input onClick={onTaskDone} className={checkboxClass} type={checkBoxType} />
+        <div className="view">
+          <input onClick={onTaskDone} className="toggle" type="checkbox" />
           <label>
-            <span className={descClass}>{label}</span>
-            <span className={createdClass}>{created}</span>
+            <span className="description">{label}</span>
+            <span className="created">{created}</span>
           </label>
-          <button onClick={this.taskEditing} className={iconEditClass}></button>
-          <button onClick={onDeleted} className={iconDestroyClass}></button>
+          <button onClick={this.taskEditing} className="icon icon-edit"></button>
+          <button onClick={onDeleted} className="icon icon-destroy"></button>
         </div>
         {editField}
       </li>

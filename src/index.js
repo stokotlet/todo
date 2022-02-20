@@ -11,13 +11,6 @@ class App extends React.Component {
 
   createNewTask = (label) => {
     const newTask = {
-      viewClass: 'view',
-      checkboxClass: 'toggle',
-      descClass: 'description',
-      createdClass: 'created',
-      iconEditClass: 'icon icon-edit',
-      iconDestroyClass: 'icon icon-destroy',
-      checkBoxType: 'checkbox',
       label: label,
       done: false,
       id: this.idxCounter++,
