@@ -25,7 +25,7 @@ export default class Task extends React.Component {
   onSubmitHandler = (e) => {
     e.preventDefault();
     if (this.state.label) {
-      this.props.onEditTask(this.state.label);
+      this.props.onEditTask(this.state.label, this.props.id);
       this.setState({
         editing: false,
       });
@@ -51,7 +51,7 @@ export default class Task extends React.Component {
   }
 
   render() {
-    let { onDeleted, onTaskDone, done, label, hidden } = this.props;
+    let { onDeleted, onTaskDone, done, label, id } = this.props;
     const created = formatDistanceToNow(this.state.date, { includeSeconds: true });
     const editField = (
       <form onSubmit={this.onSubmitHandler}>
@@ -66,20 +66,21 @@ export default class Task extends React.Component {
     if (this.state.editing) {
       mainClass = 'editing';
     }
-    if (hidden) {
-      mainClass = 'hidden';
-    }
 
     return (
       <li className={mainClass}>
         <div className="view">
-          <input onClick={onTaskDone} className="toggle" type="checkbox" />
+          {done ? (
+            <input onClick={() => onTaskDone(id)} className="toggle" checked type="checkbox" />
+          ) : (
+            <input onClick={() => onTaskDone(id)} className="toggle" type="checkbox" />
+          )}
           <label>
             <span className="description">{label}</span>
             <span className="created">{created}</span>
           </label>
           <button onClick={this.taskEditing} className="icon icon-edit"></button>
-          <button onClick={onDeleted} className="icon icon-destroy"></button>
+          <button onClick={() => onDeleted(id)} className="icon icon-destroy"></button>
         </div>
         {editField}
       </li>

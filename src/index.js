@@ -14,13 +14,13 @@ class App extends React.Component {
       label: label,
       done: false,
       id: this.idxCounter++,
-      hidden: false,
     };
     return newTask;
   };
 
   state = {
-    taskData: [],
+    taskData: [this.createNewTask('some 1'), this.createNewTask('some 2')],
+    filter: 'all',
   };
 
   counter = () => {
@@ -51,50 +51,21 @@ class App extends React.Component {
     });
   };
 
-  filterData = (bool1, bool2, taskData) => {
-    let filteredDone = taskData.filter((task) => task.done === true);
-    let filteredActive = taskData.filter((task) => task.done === false);
-
-    let doneData = filteredDone.map((task) => {
-      task.hidden = bool1;
-      return task;
-    });
-    let activeData = filteredActive.map((task) => {
-      task.hidden = bool2;
-      return task;
-    });
-    return [...doneData, ...activeData];
-  };
-
   onFilterCompleted = () => {
-    this.setState(({ taskData }) => {
-      let newData = this.filterData(false, true, taskData);
-      return {
-        taskData: newData,
-      };
+    this.setState({
+      filter: 'complete',
     });
   };
 
   onFilterActive = () => {
-    this.setState(({ taskData }) => {
-      let newData = this.filterData(true, false, taskData);
-      return {
-        taskData: newData,
-      };
+    this.setState({
+      filter: 'active',
     });
   };
 
   onFilterAll = () => {
-    this.setState(({ taskData }) => {
-      let oldData = [...taskData];
-      let newData = oldData.map((task) => {
-        task.hidden = false;
-        return task;
-      });
-      newData.sort((a, b) => a.id - b.id);
-      return {
-        taskData: newData,
-      };
+    this.setState({
+      filter: 'all',
     });
   };
 
@@ -118,7 +89,7 @@ class App extends React.Component {
     });
   };
 
-  onEditTask = (id, label) => {
+  onEditTask = (label, id) => {
     this.setState(({ taskData }) => {
       const idx = taskData.findIndex((task) => task.id === id);
       const task = taskData[idx];
@@ -144,6 +115,7 @@ class App extends React.Component {
             onDeleted={this.deleteTask}
             onTaskDone={this.onTaskDone}
             onEditTask={this.onEditTask}
+            filter={this.state.filter}
           />
         </section>
         <Footer
