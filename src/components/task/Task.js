@@ -1,10 +1,10 @@
 import React from 'react';
-import formatDistanceToNow from 'date-fns/formatDistanceToNow';
+
+import Timer from '../timer/timer';
+import CreatedDate from '../created-date/created-date';
 
 export default class Task extends React.Component {
   state = {
-    date: new Date(),
-    tick: true,
     editing: false,
   };
 
@@ -18,6 +18,10 @@ export default class Task extends React.Component {
     if (e.target.value) {
       this.setState({
         label: e.target.value,
+      });
+    } else {
+      this.setState({
+        label: '',
       });
     }
   };
@@ -36,29 +40,13 @@ export default class Task extends React.Component {
     }
   };
 
-  componentDidMount() {
-    this.timerID = setInterval(() => this.tick(), 1000);
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.timerID);
-  }
-
-  tick() {
-    this.setState({
-      tick: new Date(),
-    });
-  }
-
   render() {
-    let { onDeleted, onTaskDone, done, label, id } = this.props;
-    const created = formatDistanceToNow(this.state.date, { includeSeconds: true });
+    let { onDeleted, onTaskDone, done, label, id, timer, updateTimer, interval, clearInterval } = this.props;
     const editField = (
       <form onSubmit={this.onSubmitHandler}>
         <input onChange={this.onchangeHandler} type="text" className="edit" defaultValue={label} />
       </form>
     );
-
     let mainClass = 'active';
     if (done) {
       mainClass = 'completed';
@@ -71,13 +59,14 @@ export default class Task extends React.Component {
       <li className={mainClass}>
         <div className="view">
           {done ? (
-            <input onClick={() => onTaskDone(id)} className="toggle" checked type="checkbox" />
+            <input onClick={() => onTaskDone(id)} className="toggle" checked readOnly type="checkbox" />
           ) : (
-            <input onClick={() => onTaskDone(id)} className="toggle" type="checkbox" />
+            <input onClick={() => onTaskDone(id)} className="toggle" readOnly type="checkbox" />
           )}
           <label>
-            <span className="description">{label}</span>
-            <span className="created">{created}</span>
+            <span className="title">{label}</span>
+            <Timer timer={timer} id={id} updateTimer={updateTimer} interval={interval} clearInterval={clearInterval} />
+            <CreatedDate />
           </label>
           <button onClick={this.taskEditing} className="icon icon-edit"></button>
           <button onClick={() => onDeleted(id)} className="icon icon-destroy"></button>

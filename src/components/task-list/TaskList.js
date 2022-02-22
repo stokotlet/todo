@@ -3,7 +3,7 @@ import React from 'react';
 import Task from '../task/Task';
 import './task-list.css';
 
-function TaskList({ taskData, onDeleted, onTaskDone, onEditTask, filter }) {
+function TaskList({ taskData, onDeleted, onTaskDone, onEditTask, updateTimer, clearInterval, filter }) {
   let filtered;
   if (filter === 'active') {
     filtered = taskData.filter((task) => task.done === false);
@@ -15,7 +15,14 @@ function TaskList({ taskData, onDeleted, onTaskDone, onEditTask, filter }) {
 
   const taskList = filtered.map((task) => (
     <div key={task.id}>
-      <Task {...task} onDeleted={onDeleted} onTaskDone={onTaskDone} onEditTask={onEditTask} />
+      <Task
+        {...task}
+        onDeleted={onDeleted}
+        onTaskDone={onTaskDone}
+        onEditTask={onEditTask}
+        updateTimer={updateTimer}
+        clearInterval={clearInterval}
+      />
     </div>
   ));
   return <ul className="todo-list">{taskList}</ul>;

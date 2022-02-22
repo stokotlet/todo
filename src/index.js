@@ -9,17 +9,19 @@ import './index.css';
 class App extends React.Component {
   idxCounter = 0;
 
-  createNewTask = (label) => {
+  createNewTask = (label, timer = 0) => {
     const newTask = {
       label: label,
       done: false,
       id: this.idxCounter++,
+      timer: timer,
+      interval: '',
     };
     return newTask;
   };
 
   state = {
-    taskData: [this.createNewTask('some 1'), this.createNewTask('some 2')],
+    taskData: [this.createNewTask('some1', 500), this.createNewTask('some2', 5)],
     filter: 'all',
   };
 
@@ -28,10 +30,48 @@ class App extends React.Component {
     return countList.length;
   };
 
+  addNewTask = (label, time) => {
+    const newTask = this.createNewTask(label, time);
+    this.setState(({ taskData }) => {
+      const copyTaskData = [...taskData];
+      const newTaskData = [...copyTaskData, newTask];
+      return {
+        taskData: newTaskData,
+      };
+    });
+  };
+
   deleteTask = (id) => {
     this.setState(({ taskData }) => {
       const idx = taskData.findIndex((task) => task.id === id);
+      const task = taskData[idx];
+      const currentTask = { ...task };
+      clearInterval(currentTask.interval);
       const newTaskData = [...taskData.slice(0, idx), ...taskData.slice(idx + 1)];
+      return {
+        taskData: newTaskData,
+      };
+    });
+  };
+
+  clearCompleted = () => {
+    this.setState(({ taskData }) => {
+      let active = taskData.filter((task) => !task.done);
+      let done = taskData.filter((task) => task.done);
+      done.forEach((task) => clearInterval(task.interval));
+      return {
+        taskData: active,
+      };
+    });
+  };
+
+  onEditTask = (label, id) => {
+    this.setState(({ taskData }) => {
+      const idx = taskData.findIndex((task) => task.id === id);
+      const task = taskData[idx];
+      const currentTask = { ...task };
+      currentTask.label = label;
+      const newTaskData = [...taskData.slice(0, idx), currentTask, ...taskData.slice(idx + 1)];
       return {
         taskData: newTaskData,
       };
@@ -44,6 +84,39 @@ class App extends React.Component {
       const task = taskData[idx];
       const currentTask = { ...task };
       currentTask.done = !currentTask.done;
+      const newTaskData = [...taskData.slice(0, idx), currentTask, ...taskData.slice(idx + 1)];
+      return {
+        taskData: newTaskData,
+      };
+    });
+  };
+
+  updateTimer = (id) => {
+    let interval = setInterval(() => {
+      this.setState(({ taskData }) => {
+        const idx = taskData.findIndex((task) => task.id === id);
+        const task = taskData[idx];
+        const currentTask = { ...task };
+        if (currentTask.timer !== 0) {
+          currentTask.timer = currentTask.timer - 1;
+          currentTask.interval = interval;
+        } else {
+          clearInterval(interval);
+        }
+        const newTaskData = [...taskData.slice(0, idx), currentTask, ...taskData.slice(idx + 1)];
+        return {
+          taskData: newTaskData,
+        };
+      });
+    }, 1000);
+  };
+
+  clearInterval = (id) => {
+    this.setState(({ taskData }) => {
+      const idx = taskData.findIndex((task) => task.id === id);
+      const task = taskData[idx];
+      const currentTask = { ...task };
+      currentTask.interval = '';
       const newTaskData = [...taskData.slice(0, idx), currentTask, ...taskData.slice(idx + 1)];
       return {
         taskData: newTaskData,
@@ -69,39 +142,6 @@ class App extends React.Component {
     });
   };
 
-  addNewTask = (label) => {
-    const newTask = this.createNewTask(label);
-    this.setState(({ taskData }) => {
-      const copyTaskData = [...taskData];
-      const newTaskData = [...copyTaskData, newTask];
-      return {
-        taskData: newTaskData,
-      };
-    });
-  };
-
-  clearCompleted = () => {
-    this.setState(({ taskData }) => {
-      const active = taskData.filter((task) => !task.done);
-      return {
-        taskData: active,
-      };
-    });
-  };
-
-  onEditTask = (label, id) => {
-    this.setState(({ taskData }) => {
-      const idx = taskData.findIndex((task) => task.id === id);
-      const task = taskData[idx];
-      const currentTask = { ...task };
-      currentTask.label = label;
-      const newTaskData = [...taskData.slice(0, idx), currentTask, ...taskData.slice(idx + 1)];
-      return {
-        taskData: newTaskData,
-      };
-    });
-  };
-
   render() {
     return (
       <section className="todoapp">
@@ -112,10 +152,12 @@ class App extends React.Component {
         <section className="main">
           <TaskList
             taskData={this.state.taskData}
+            filter={this.state.filter}
             onDeleted={this.deleteTask}
             onTaskDone={this.onTaskDone}
             onEditTask={this.onEditTask}
-            filter={this.state.filter}
+            updateTimer={this.updateTimer}
+            clearInterval={this.clearInterval}
           />
         </section>
         <Footer
